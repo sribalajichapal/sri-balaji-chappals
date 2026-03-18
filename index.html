@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sri Balaji Chappal Kadai</title>
+    <!-- Tailwind CSS for Styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom styles for smooth scrolling and animations */
+        html { scroll-behavior: smooth; }
+        .cart-slide-in { transition: transform 0.3s ease-in-out; }
+        .hidden-cart { transform: translateX(100%); }
+        .show-cart { transform: translateX(0); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    <!-- Navbar -->
+    <nav class="bg-pink-600 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center cursor-pointer">
+                    <i class="fa-solid fa-shoe-prints text-2xl mr-2"></i>
+                    <span class="font-bold text-xl tracking-wide">Sri Balaji Chappal</span>
+                </div>
+                
+                <!-- Search Bar (Dummy for now) -->
+                <div class="hidden md:block flex-1 max-w-md mx-8">
+                    <div class="relative">
+                        <input type="text" placeholder="Brand, type thedi parunga..." class="w-full pl-10 pr-4 py-2 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-pink-300">
+                        <i class="fa-solid fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                </div>
+
+                <!-- Cart Icon -->
+                <div class="flex items-center">
+                    <button onclick="toggleCart()" class="relative p-2 text-white hover:text-pink-200 focus:outline-none">
+                        <i class="fa-solid fa-shopping-cart text-2xl"></i>
+                        <span id="cart-count" class="absolute top-0 right-0 bg-yellow-400 text-xs text-black font-bold rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Search -->
+        <div class="md:hidden px-4 pb-3">
+            <div class="relative">
+                <input type="text" placeholder="Thedi parunga..." class="w-full pl-10 pr-4 py-2 rounded-lg text-gray-900 focus:outline-none">
+                <i class="fa-solid fa-search absolute left-3 top-3 text-gray-400"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Banner Section -->
+    <div class="bg-pink-100 py-8 px-4 text-center">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-pink-700 mb-2">India-vin Best Chappals!</h1>
+        <p class="text-gray-600 mb-4">Bata, Paragon, VKC, Sparx marum pala brands unga budget-la.</p>
+        <span class="bg-pink-600 text-white px-4 py-1 rounded-full text-sm font-semibold">Free Delivery!</span>
+    </div>
+
+    <!-- Main Products Grid -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h2 class="text-2xl font-bold mb-6 border-b-2 border-pink-500 pb-2 inline-block">Pudhu Arrivals</h2>
+        
+        <div id="products-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            <!-- Products will be injected here via JavaScript -->
+        </div>
+    </main>
+
+    <!-- Shopping Cart Sidebar -->
+    <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full md:w-96 bg-white shadow-2xl z-50 hidden-cart cart-slide-in flex flex-col">
+        <div class="bg-pink-600 text-white p-4 flex justify-between items-center">
+            <h2 class="text-xl font-bold"><i class="fa-solid fa-cart-shopping mr-2"></i>Unga Cart</h2>
+            <button onclick="toggleCart()" class="text-white hover:text-gray-200 focus:outline-none">
+                <i class="fa-solid fa-times text-2xl"></i>
+            </button>
+        </div>
+        
+        <!-- Cart Items -->
+        <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-4">
+            <!-- Cart items will be injected here -->
+            <div id="empty-cart-msg" class="text-center text-gray-500 mt-10">
+                <i class="fa-solid fa-box-open text-4xl mb-3 text-gray-300"></i>
+                <p>Cart empty-a irukku. Chappal add pannunga!</p>
+            </div>
+        </div>
+
+        <!-- Checkout Section -->
+        <div class="border-t p-4 bg-gray-50">
+            <div class="flex justify-between mb-4 font-bold text-lg">
+                <span>Total Amount:</span>
+                <span id="cart-total">₹0</span>
+            </div>
+            
+            <!-- Customer Details Form -->
+            <div class="space-y-3 mb-4">
+                <input type="text" id="cust-name" placeholder="Unga Name" class="w-full border p-2 rounded focus:ring-2 focus:ring-pink-400 outline-none">
+                <textarea id="cust-address" placeholder="Delivery Address & Pincode" class="w-full border p-2 rounded focus:ring-2 focus:ring-pink-400 outline-none" rows="2"></textarea>
+            </div>
+
+            <button onclick="sendOrderToWhatsApp()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg flex justify-center items-center shadow-md transition duration-200">
+                <i class="fa-brands fa-whatsapp text-xl mr-2"></i> WhatsApp-la Order Pannunga
+            </button>
+        </div>
+    </div>
+
+    <!-- Overlay for Cart -->
+    <div id="cart-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="toggleCart()"></div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white text-center py-6 mt-10">
+        <p>© 2026 Sri Balaji Chappal Kadai. All rights reserved.</p>
+        <p class="text-sm text-gray-400 mt-1">WhatsApp Order Number: +91 9500201960</p>
+    </footer>
+
+    <!-- JavaScript for Logic -->
+    <script>
+        // Unga WhatsApp Number (With 91 country code for India)
+        const whatsappNumber = "919500201960"; 
+
+        // Product Database (Idhu mari unga kadai chappals-a add pannikalam)
+        const products = [
+            { id: 1, name: "Bata Formal Chappal", brand: "Bata", price: 499, originalPrice: 699, img: "https://images.unsplash.com/photo-1603487742131-4160ec999306?auto=format&fit=crop&q=80&w=300&h=300" },
+            { id: 2, name: "VKC Pride Casual Slipper", brand: "VKC", price: 299, originalPrice: 350, img: "https://images.unsplash.com/photo-1562183241-b937e95585b6?auto=format&fit=crop&q=80&w=300&h=300" },
+            { id: 3, name: "Sparx Sporty Sandal Men", brand: "Sparx", price: 749, originalPrice: 999, img: "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&q=80&w=300&h=300" },
+            { id: 4, name: "Paragon Office Wear", brand: "Paragon", price: 399, originalPrice: 450, img: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&q=80&w=300&h=300" },
+            { id: 5, name: "Relaxo Hawaii Slipper", brand: "Relaxo", price: 150, originalPrice: 180, img: "https://images.unsplash.com/photo-1628253508499-5231c518bbfa?auto=format&fit=crop&q=80&w=300&h=300" },
+            { id: 6, name: "Walkaroo Stylish Sandal", brand: "Walkaroo", price: 550, originalPrice: 650, img: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&q=80&w=300&h=300" },
+            { id: 7, name: "Puma Slides (Copy)", brand: "Local", price: 250, originalPrice: 400, img: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&q=80&w=300&h=300" },
+            { id: 8, name: "Women's Fancy Heel Chappal", brand: "Bata", price: 650, originalPrice: 899, img: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&q=80&w=300&h=300" } // Reusing image for demo
+        ];
+
+        let cart = [];
+
+        // Function to display products on the page
+        function renderProducts() {
+            const container = document.getElementById('products-container');
+            container.innerHTML = '';
+
+            products.forEach(product => {
+                const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+                
+                const card = `
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                        <div class="relative">
+                            <img src="${product.img}" alt="${product.name}" class="w-full h-40 md:h-48 object-cover">
+                            <span class="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">-${discount}% OFF</span>
+                        </div>
+                        <div class="p-4">
+                            <p class="text-sm text-gray-500 font-semibold mb-1">${product.brand}</p>
+                            <h3 class="font-bold text-gray-800 text-md md:text-lg mb-2 truncate">${product.name}</h3>
+                            <div class="flex items-center space-x-2 mb-3">
+                                <span class="font-bold text-lg text-black">₹${product.price}</span>
+                                <span class="text-sm text-gray-400 line-through">₹${product.originalPrice}</span>
+                            </div>
+                            <button onclick="addToCart(${product.id})" class="w-full bg-pink-100 text-pink-700 hover:bg-pink-600 hover:text-white font-semibold py-2 rounded transition-colors border border-pink-600">
+                                Cart-la Podu
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }
+
+        // Cart Functions
+        function toggleCart() {
+            const cartSidebar = document.getElementById('cart-sidebar');
+            const overlay = document.getElementById('cart-overlay');
+            
+            if (cartSidebar.classList.contains('hidden-cart')) {
+                cartSidebar.classList.remove('hidden-cart');
+                cartSidebar.classList.add('show-cart');
+                overlay.classList.remove('hidden');
+            } else {
+                cartSidebar.classList.add('hidden-cart');
+                cartSidebar.classList.remove('show-cart');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            
+            updateCartUI();
+            
+            // Show a mini notification (optional, simple alert for now)
+            // alert(`${product.name} cart-la add aayiduchu!`);
+            
+            // Open cart automatically when item is added
+            const cartSidebar = document.getElementById('cart-sidebar');
+            if (cartSidebar.classList.contains('hidden-cart')) {
+                toggleCart();
+            }
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartUI();
+        }
+
+        function changeQuantity(productId, delta) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                item.quantity += delta;
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    updateCartUI();
+                }
+            }
+        }
+
+        function updateCartUI() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const emptyMsg = document.getElementById('empty-cart-msg');
+            const cartCount = document.getElementById('cart-count');
+            const cartTotal = document.getElementById('cart-total');
+
+            // Update Header Count
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.innerText = totalItems;
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '';
+                cartItemsContainer.appendChild(emptyMsg);
+                emptyMsg.style.display = 'block';
+                cartTotal.innerText = '₹0';
+                return;
+            }
+
+            emptyMsg.style.display = 'none';
+            cartItemsContainer.innerHTML = '';
+            
+            let totalAmount = 0;
+
+            cart.forEach(item => {
+                totalAmount += (item.price * item.quantity);
+                const cartItemHTML = `
+                    <div class="flex items-center justify-between border-b pb-3">
+                        <div class="flex items-center gap-3">
+                            <img src="${item.img}" class="w-16 h-16 object-cover rounded">
+                            <div>
+                                <h4 class="font-semibold text-sm w-32 truncate">${item.name}</h4>
+                                <p class="text-pink-600 font-bold">₹${item.price}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="changeQuantity(${item.id}, -1)" class="bg-gray-200 px-2 rounded">-</button>
+                            <span>${item.quantity}</span>
+                            <button onclick="changeQuantity(${item.id}, 1)" class="bg-gray-200 px-2 rounded">+</button>
+                            <button onclick="removeFromCart(${item.id})" class="text-red-500 ml-2"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+                cartItemsContainer.innerHTML += cartItemHTML;
+            });
+
+            cartTotal.innerText = `₹${totalAmount}`;
+        }
+
+        // Send Order logic to WhatsApp
+        function sendOrderToWhatsApp() {
+            if (cart.length === 0) {
+                alert("Cart empty-a irukku! Mudhala chappal select pannunga.");
+                return;
+            }
+
+            const name = document.getElementById('cust-name').value.trim();
+            const address = document.getElementById('cust-address').value.trim();
+
+            if (!name || !address) {
+                alert("Dhayavu senju unga Name matrum Address-a type pannunga.");
+                return;
+            }
+
+            let orderItems = "";
+            let totalAmount = 0;
+
+            cart.forEach((item, index) => {
+                orderItems += `${index + 1}. ${item.name} (x${item.quantity}) - ₹${item.price * item.quantity}\n`;
+                totalAmount += (item.price * item.quantity);
+            });
+
+            // Message Format in Tamil/Tanglish
+            const message = `Pudhiya Order Vandhurukku! 🛍️\n\n` +
+                            `*Customer Name:* ${name}\n` +
+                            `*Address:* ${address}\n\n` +
+                            `*Order Details:*\n${orderItems}\n` +
+                            `*Total Amount:* ₹${totalAmount}\n\n` +
+                            `Nandri!`;
+
+            // Encode message for URL
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+
+            // Open WhatsApp in new tab
+            window.open(whatsappUrl, '_blank');
+
+            // Clear Cart after ordering
+            cart = [];
+            updateCartUI();
+            document.getElementById('cust-name').value = '';
+            document.getElementById('cust-address').value = '';
+            toggleCart();
+        }
+
+        // Initialize Page
+        window.onload = () => {
+            renderProducts();
+        };
+    </script>
+</body>
+</html>
